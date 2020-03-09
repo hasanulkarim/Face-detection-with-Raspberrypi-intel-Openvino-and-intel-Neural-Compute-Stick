@@ -15,5 +15,12 @@ Example:
 $ python3 app_fps.py -m /home/pi/Documents/NCS_playground/models/face_detection/face-detection-adas-0001.xml -i 'CAM' -d 'MYRIAD'
 ```
 
- 
+### Output showing face detection:
+
+![face detection demo](https://github.com/hasanulkarim/Face-detection-with-Raspberrypi-intel-Openvino-and-intel-Neural-Compute-Stick/cam_out_5fps.mp4)
+
+I bought this camera which can work in infrared mode when it's completely dark and can also do face detection if it's dark :)
+
+<video src="cam_out_infrared.mp4" width="320" height="200" controls preload></video>
+
 
