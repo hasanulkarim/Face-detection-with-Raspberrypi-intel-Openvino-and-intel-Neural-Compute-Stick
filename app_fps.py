@@ -3,18 +3,27 @@ import cv2
 import numpy as np
 from inference import Network
 import time
+import os
 
-INPUT_STREAM = "/home/pi/Documents/NCS_playground/test_video.mp4"
-model_path = "/home/pi/Documents/NCS_playground/models/face_detection/face-detection-adas-0001.xml"
+dir = os.path.dirname(__file__)
+model_path = os.path.join(dir,'models','face_detection','face-detection-adas-0001.xml')
+
+#**Use the appropriate CPU_EXTENSION file for your device, make sure to also update the directory of the plugin file based on
+#the openvino installation directory**
+
 ##For WINDOWS
 #CPU_EXTENSION = "C:\Program Files (x86)\IntelSWTools\openvino\deployment_tools\inference_engine\bin\intel64\Debug\cpu_extension_avx2.dll"
+
 ##FOr linux:
 #CPU_EXTENSION = "/opt/intel/openvino/deployment_tools/inference_engine/lib/intel64/libcpu_extension_sse4.so"
+
 ##For MYRIAD:
 CPU_EXTENSION = "/opt/intel/openvino/deployment_tools/inference_engine/lib/armv7l/libmyriadPlugin.so"
+
 #For raspian Armv71:
 #CPU_EXTENSION = "/opt/intel/openvino/deployment_tools/inference_engine/lib/armv7l/libcpu_extension.so"
-#For raspian Armv71 hetero?:
+
+#For raspian Armv71 hetero?(have not experimented with this one, play with it if the default raspian extension doesnt work):
 #CPU_EXTENSION = "/opt/intel/openvino/deployment_tools/inference_engine/lib/armv7l/libHeteroPlugin.so"
 
 def get_args():
@@ -70,9 +79,11 @@ def infer_on_video(args):
     # Create a video writer for the output video
     # The second argument should be `cv2.VideoWriter_fourcc('M','J','P','G')`
     # on Mac, and `0x00000021` on Linux 0x00000021
-    #For linux:
+    
+    #For linux(note: the fps was chosen based on my pi camera recording, more details below):
     out = cv2.VideoWriter('cam_out_5fps.mp4', 0x00000021, 5, (width,height)) #this is for linux, for mac use ('M','J','P','G')
-    ## For windows:
+    
+    ## For windows (good luck finding the right fourcc codec, tried with a lot of them and finally this one probably worked)!:
     #fourcc = cv2.VideoWriter_fourcc(*'MPG4')
     #out = cv2.VideoWriter('out.mp4',fourcc, 30, (width,height))
     
@@ -85,39 +96,30 @@ def infer_on_video(args):
         # Read the next frame
         flag, frame = cap.read()
         
-        #count the number of frames
+        # count the number of frames
         framecount += 1
         
         if not flag:
             break
         key_pressed = cv2.waitKey(10)
-        ### TODO: Pre-process the frame
-#         # I am using the semantic segmentation-adas-0001 model, so preprocessing will be done according to that model
-#         n_w = 2048
-#         n_h = 1024
-#         preprocessed = np.copy(frame)
-#         print('=========')
-#         print('frame.shape=',preprocessed.shape)
-#         print('net_input_shape=',net_input_shape)
-#         print('=========')
-#         preprocessed = cv2.resize(preprocessed,n_w,n_h)
-#         preprocessed = preprocessed.transpose((2,0,1))
-#         preprocessed = preprocessed.reshape(1,3,n_h,n_w)
 
+        # pre-process the frame to work with the pretrained-model, more info about the model input and output dimension can be found on the
+        #openvino website
+        
         p_frame = cv2.resize(frame, (net_input_shape[3], net_input_shape[2]))
         p_frame = p_frame.transpose((2,0,1))
         p_frame = p_frame.reshape(1, *p_frame.shape)
         
-        ### TODO: Perform inference on the frame
+        ### Perform inference on the frame
         
         plugin.async_inference(p_frame)
         
 
-        ### TODO: Get the output of inference
+        ### Get the output of inference
         if plugin.wait() == 0:
             result = plugin.extract_output()
 
-        ### TODO: Update the frame to include detected bounding boxes
+        ### Update the frame to include detected bounding boxes
         frame = draw_boxes(frame, result, args, width, height)
         # Write out the frame
         out.write(frame)
@@ -125,7 +127,9 @@ def infer_on_video(args):
         # Break if escape key pressed
         if key_pressed == 27:
             break
-    print('Total frames: {} in {} seconds'.format(framecount, duration))
+    print('Total frames: {} in {} seconds'.format(framecount, duration)) # This helps to decide the fps to use to write the video using 
+    #cv2.VideoWriter, in my case it was 47 frames within 10s, so used 5 fps
+    
     # Release the out writer, capture, and destroy any OpenCV windows
     out.release()
     cap.release()
