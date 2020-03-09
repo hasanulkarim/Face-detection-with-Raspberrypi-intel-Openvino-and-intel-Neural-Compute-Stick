@@ -17,9 +17,9 @@ $ python3 app_fps.py -m /home/pi/Documents/NCS_playground/models/face_detection/
 
 ### Output showing face detection:
 
-![face detection demo](output/cam_out_infrared_sm.png)
+![face detection demo](output/cam_out_daylight.png)
 
-I bought this camera which can work in infrared mode when it's completely dark and can also do face detection if it's dark :)
+I bought this camera ([IR-cut camera for raspberry pi](https://www.amazon.com/gp/product/B07R4JH2ZV/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)) which can work in infrared mode when it's completely dark and the face detection model seems to work even if it's dark :)
 
 ![infrared_face_detection](output/cam_out_infrared_sm.png)
 
