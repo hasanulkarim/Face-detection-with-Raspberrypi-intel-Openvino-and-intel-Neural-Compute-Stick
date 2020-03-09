@@ -69,7 +69,7 @@ class Network:
         '''
         Makes an asynchronous inference request, given an input image.
         '''
-        ### TODO: Start asynchronous inference
+        ### Start asynchronous inference
         self.exec_network.start_async(request_id=0,inputs={self.input_blob:image})
         return 
 
@@ -87,7 +87,7 @@ class Network:
         '''
         Returns a list of the results for the output layer of the network.
         '''
-        ### TODO: Return the outputs of the network from the output_blob
+        ### Return the outputs of the network from the output_blob
         outputs = self.exec_network.requests[0].outputs[self.output_blob]
         
         return outputs
