@@ -17,10 +17,10 @@ $ python3 app_fps.py -m /home/pi/Documents/NCS_playground/models/face_detection/
 
 ### Output showing face detection:
 
-![face detection demo](https://github.com/hasanulkarim/Face-detection-with-Raspberrypi-intel-Openvino-and-intel-Neural-Compute-Stick/cam_out_5fps.mp4)
+![face detection demo](output/cam_out_infrared_sm.png)
 
 I bought this camera which can work in infrared mode when it's completely dark and can also do face detection if it's dark :)
 
-<video src="cam_out_infrared.mp4" width="320" height="200" controls preload></video>
+![infrared_face_detection](output/cam_out_infrared_sm.png)
 
 
